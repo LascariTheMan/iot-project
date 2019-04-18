@@ -26,13 +26,14 @@ function draw(coords) {
     if (marker) {
         map.removeLayer(marker);
     }
-    marker = drawCircle(coords, 'red', 10, 1);
+    marker = drawCircle(coords, 'red', 5, 5, 1);
     map.fitBounds(marker.getBounds());
 }
 
-function drawCircle(coords, color, weight, opacity) {
+function drawCircle(coords, color, radius, weight, opacity) {
     let circle = L.circle(coords, {
         color: color, 
+        radius: radius, 
         weight: weight, 
         opacity: opacity
     });
