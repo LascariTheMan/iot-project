@@ -15,117 +15,27 @@ map.addEventListener('click', function(e) {
 });
 
 map.addEventListener('mousemove', function(e) {
-    document.getElementById("lat").innerHTML = e.latlng.lat;
-    document.getElementById("lon").innerHTML = e.latlng.lng;
+    document.getElementById('lat').innerHTML = e.latlng.lat;
+    document.getElementById('lon').innerHTML = e.latlng.lng;
  });
 
+let marker;
 
-let layerGt = [];
-let layerPhone = [];
-let layerMean = [];
-let layerMedian = [];
 
-let checkBoxGt = document.getElementById("checkBoxGt");
-let checkBoxPhone = document.getElementById("checkBoxPhone");
-let checkBoxMean = document.getElementById("checkBoxMean");
-let checkBoxMedian = document.getElementById("checkBoxMedian");
-
-checkBoxGt.onchange = toggleGt;
-checkBoxPhone.onchange = togglePhone;
-checkBoxMean.onchange = toggleMean;
-checkBoxMedian.onchange = toggleMedian;
-
-function toggleGt() {
-    toggle(layerGt, this.checked);
-}
-
-function togglePhone() {
-    toggle(layerPhone, this.checked);
-}
-
-function toggleMean() {
-    toggle(layerMean, this.checked);
-}
-
-function toggleMedian() {
-    toggle(layerMedian, this.checked);
-}
-
-function toggle(collection, checked) {
-    if(checked) {
-        add(collection);
+function draw(coords) {
+    if (marker) {
+        map.removeLayer(marker);
     }
-    else {
-        remove(collection);
-    }
+    marker = drawCircle(coords, 'red', 10, 1);
+    map.fitBounds(marker.getBounds());
 }
 
-function add(collection) {
-    for(i = 0; i < collection.length; i++) {
-        collection[i].addTo(map);
-    }
-}
-
-function remove(collection) {
-    for(i = 0; i < collection.length; i++) {
-        map.removeLayer(collection[i]);
-    }
-}
-
-function clearRaw() {
-    remove(layerGt);
-    remove(layerPhone);
-    layerGt = [];
-    layerPhone = [];
-}
-
-function clearFilter() {
-    remove(layerMean);
-    remove(layerMedian);
-    layerMean = [];
-    layerMedian = [];
-}
-
-function drawRaw(coords) {
-    clearRaw();
-
-    drawPolyline(coords, 'gt', layerGt, 'red', 10, 1);
-    drawPolyline(coords, 'gt', layerGt, 'salmon', 5, 1);
-    drawPolyline(coords, 'phone', layerPhone, 'blue', 10, 0.6);
-    let routeToFitMapBy = drawPolyline(coords, 'phone', layerPhone, 'lightblue', 5, 0.6);
-    map.fitBounds(routeToFitMapBy.getBounds());
-
-    checkCheckBoxes();
-}
-
-function drawFilter(coords) {
-    clearFilter();
-    
-    drawPolyline(coords, 'mean', layerMean, 'green', 10, 0.6);
-    drawPolyline(coords, 'mean', layerMean, 'lightgreen', 5, 0.6);
-    drawPolyline(coords, 'median', layerMedian, 'yellowgreen', 10, 0.6);
-    drawPolyline(coords, 'median', layerMedian, 'yellow', 5, 0.6);
-
-    checkCheckBoxes();
-}
-
-function drawPolyline(coords, type, layer, color, weight, opacity) {
-    let route = L.polyline(coords[type], {
+function drawCircle(coords, color, weight, opacity) {
+    let circle = L.circle(coords, {
         color: color, 
         weight: weight, 
         opacity: opacity
     });
-    layer.push(route);
-    return route;
-}
-
-function checkCheckBoxes() {
-    checkBoxGt.checked = true;
-    checkBoxPhone.checked = true;
-    checkBoxMean.checked = true;
-    checkBoxMedian.checked = true;
-    checkBoxGt.onchange();
-    checkBoxPhone.onchange();
-    checkBoxMean.onchange();
-    checkBoxMedian.onchange();
+    circle.addTo(map);
+    return circle;
 }
