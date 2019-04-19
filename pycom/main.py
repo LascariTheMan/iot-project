@@ -13,16 +13,28 @@ from credentials import SSID, KEY
 from mqtt_credentials import BROKER, USER, PASSWORD, PORT
 
 
-client = MQTTClient(USER, BROKER, PORT, user=USER, password=PASSWORD)
-def settimeout(duration): pass
-client.settimeout = settimeout
-client.connect()
+
 
 wlan = WLAN(mode=WLAN.STA)
 wlan.antenna(WLAN.INT_ANT)
 wlan.connect(SSID, auth=(WLAN.WPA2, KEY), timeout=5000)
 while not wlan.isconnected(): machine.idle()
 print('Connected to wifi\n')
+
+def sub_lost_cup(topic, msg):
+    if (msg == b'lost'):
+        start_flashing(100)
+    elif (msg == b'found')
+        stop_flashing()
+
+client = MQTTClient(USER, BROKER, PORT, user=USER, password=PASSWORD)
+def settimeout(duration): pass
+client.settimeout = settimeout
+client.set_callback(sub_lost_cup)
+client.connect()
+c.subscribe(b'cup')
+
+
 
 accelerometer = LIS2HH12()
 
@@ -49,8 +61,11 @@ def start_flashing(iterations):
     for i in range(iterations):
         turn_on()
         time.sleep(1)
-        turn_off
+        turn_off()
         time.sleep(1)
+
+def stop_flashing():
+    turn_off()
 
 def turn_on():
     pycom.rgbled(0x007f00)
@@ -109,4 +124,5 @@ while True:
     temp = read_temp()
     #socket.send(f"{temp} {sips}")
     print(f"Message sent: {temp} {sips}")
+    client.wait_msg()
     
