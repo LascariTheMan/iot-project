@@ -1,10 +1,11 @@
 let findBtn = document.getElementById('findBtn');
-let lostBtn = document.getElementById('lostBtn');
+
+findBtn.onclick = plotCupOnMap;
+
 
 client = new Paho.MQTT.Client("m24.cloudmqtt.com", 14379, 'web_niels');
 
 client.onConnectionLost = onConnectionLost;
-client.onMessageArrived = plotCupOnMap;
 
 var options = {
     useSSL: true,
@@ -32,17 +33,10 @@ function onConnectionLost() {
 }
 
 
-function cupLost() {
+function plotCupOnMap() {
     message = new Paho.MQTT.Message();
     message.destinationName = "/cup";
     client.send(message);
-}
-
-findBtn.onclick = plotCupOnMap;
-lostBtn.onclick = cupLost;
-
-
-function plotCupOnMap() {
     //get cup coords from sigfox
     let coords = [55.3673, 10.4308];
     draw(coords);
