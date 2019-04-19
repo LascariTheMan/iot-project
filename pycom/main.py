@@ -7,13 +7,10 @@ from lis2hh12 import LIS2HH12
 import time
 import json
 import pycom
-from threading import Thread
+#from threading import Thread
 from umqtt import MQTTClient
 from credentials import SSID, KEY
 from mqtt_credentials import BROKER, USER, PASSWORD, PORT
-
-
-
 
 wlan = WLAN(mode=WLAN.STA)
 wlan.antenna(WLAN.INT_ANT)
@@ -24,7 +21,7 @@ print('Connected to wifi\n')
 def sub_lost_cup(topic, msg):
     if (msg == b'lost'):
         start_flashing(100)
-    elif (msg == b'found')
+    elif (msg == b'found'):
         stop_flashing()
 
 client = MQTTClient(USER, BROKER, PORT, user=USER, password=PASSWORD)
@@ -33,8 +30,6 @@ client.settimeout = settimeout
 client.set_callback(sub_lost_cup)
 client.connect()
 c.subscribe(b'cup')
-
-
 
 accelerometer = LIS2HH12()
 
@@ -53,9 +48,9 @@ def init_temp():
     pin = adc.channel(pin='G3')
     return pin
 
-def create_thread_for_flash():
-    thread = Thread(target=start_flashing, args=(10,))
-    thread.start()
+#def create_thread_for_flash():
+#    thread = Thread(target=start_flashing, args=(10,))
+#    thread.start()
 
 def start_flashing(iterations):
     for i in range(iterations):
@@ -123,6 +118,6 @@ while True:
     sips = watch_movements(duration=10, threshold=10)   # Duration: Seconds     Threshold: Degrees
     temp = read_temp()
     #socket.send(f"{temp} {sips}")
-    print(f"Message sent: {temp} {sips}")
+    print("Message sent: " + temp + " " + sips)
     client.wait_msg()
     
