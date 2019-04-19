@@ -6,6 +6,35 @@ import socket
 from lis2hh12 import LIS2HH12
 import time
 import json
+import pycom
+from threading import Thread
+from umqtt import MQTTClient
+from credentials import SSID, KEY
+from mqtt_credentials import BROKER, USER, PASSWORD, PORT
+
+
+
+
+wlan = WLAN(mode=WLAN.STA)
+wlan.antenna(WLAN.INT_ANT)
+wlan.connect(SSID, auth=(WLAN.WPA2, KEY), timeout=5000)
+while not wlan.isconnected(): machine.idle()
+print('Connected to wifi\n')
+
+def sub_lost_cup(topic, msg):
+    if (msg == b'lost'):
+        start_flashing(100)
+    elif (msg == b'found')
+        stop_flashing()
+
+client = MQTTClient(USER, BROKER, PORT, user=USER, password=PASSWORD)
+def settimeout(duration): pass
+client.settimeout = settimeout
+client.set_callback(sub_lost_cup)
+client.connect()
+c.subscribe(b'cup')
+
+
 
 accelerometer = LIS2HH12()
 
@@ -23,6 +52,26 @@ def init_temp():
     adc = machine.ADC()
     pin = adc.channel(pin='G3')
     return pin
+
+def create_thread_for_flash():
+    thread = Thread(target=start_flashing, args=(10,))
+    thread.start()
+
+def start_flashing(iterations):
+    for i in range(iterations):
+        turn_on()
+        time.sleep(1)
+        turn_off()
+        time.sleep(1)
+
+def stop_flashing():
+    turn_off()
+
+def turn_on():
+    pycom.rgbled(0x007f00)
+
+def turn_off():
+    pycom.rgbled(0x000000)
 
 def read_temp():
     val = pin.voltage()
@@ -64,6 +113,7 @@ def get_pitch():
 def get_pitch_diff():
     return get_pitch() - init_pitch
 
+pycom.heartbeat(False)
 pin = init_temp()
 socket = init_socket()
 init_roll = get_roll()
@@ -74,4 +124,5 @@ while True:
     temp = read_temp()
     #socket.send(f"{temp} {sips}")
     print(f"Message sent: {temp} {sips}")
+    client.wait_msg()
     
