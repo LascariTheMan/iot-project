@@ -6,6 +6,8 @@ import socket
 from lis2hh12 import LIS2HH12
 import time
 import json
+import pycom
+from threading import Thread
 
 accelerometer = LIS2HH12()
 
@@ -23,6 +25,23 @@ def init_temp():
     adc = machine.ADC()
     pin = adc.channel(pin='G3')
     return pin
+
+def create_thread_for_flash():
+    thread = Thread(target=start_flashing, args=(10,))
+    thread.start()
+
+def start_flashing(iterations):
+    for i in range(iterations):
+        turn_on()
+        time.sleep(1)
+        turn_off
+        time.sleep(1)
+
+def turn_on():
+    pycom.rgbled(0x007f00)
+
+def turn_off():
+    pycom.rgbled(0x000000)
 
 def read_temp():
     val = pin.voltage()
@@ -64,6 +83,7 @@ def get_pitch():
 def get_pitch_diff():
     return get_pitch() - init_pitch
 
+pycom.heartbeat(False)
 pin = init_temp()
 socket = init_socket()
 init_roll = get_roll()
