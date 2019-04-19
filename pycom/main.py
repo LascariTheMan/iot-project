@@ -8,6 +8,21 @@ import time
 import json
 import pycom
 from threading import Thread
+from umqtt import MQTTClient
+from credentials import SSID, KEY
+from mqtt_credentials import BROKER, USER, PASSWORD, PORT
+
+
+client = MQTTClient(USER, BROKER, PORT, user=USER, password=PASSWORD)
+def settimeout(duration): pass
+client.settimeout = settimeout
+client.connect()
+
+wlan = WLAN(mode=WLAN.STA)
+wlan.antenna(WLAN.INT_ANT)
+wlan.connect(SSID, auth=(WLAN.WPA2, KEY), timeout=5000)
+while not wlan.isconnected(): machine.idle()
+print('Connected to wifi\n')
 
 accelerometer = LIS2HH12()
 
