@@ -39,6 +39,7 @@ function cupLost() {
 }
 
 findBtn.onclick = plotCupOnMap;
+lostBtn.onclick = cupLost;
 
 
 function plotCupOnMap() {
