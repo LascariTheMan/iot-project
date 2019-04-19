@@ -54,16 +54,20 @@ def init_temp():
 
 def start_flashing(iterations):
     for i in range(iterations):
-        turn_on()
+        turn_on(get_color(i, iterations))
         time.sleep(1)
         turn_off()
         time.sleep(1)
 
+def get_color(iteration, iterations):
+    value = int((255 / iterations) * iteration)
+    return (value * value * value) - 1
+
 def stop_flashing():
     turn_off()
 
-def turn_on():
-    pycom.rgbled(0x007f00)
+def turn_on(color = 0x007f00):
+    pycom.rgbled(color)
 
 def turn_off():
     pycom.rgbled(0x000000)
