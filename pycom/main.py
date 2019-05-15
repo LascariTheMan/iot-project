@@ -4,10 +4,12 @@ import machine
 from machine import Pin
 import socket
 from lis2hh12 import LIS2HH12
+from pytrack import Pytrack
+from L76GNSS import L76GNSS
 import time
 import json
 import pycom
-#from threading import Thread
+from threading import Thread
 from umqtt import MQTTClient
 from credentials import SSID, KEY
 from mqtt_credentials import BROKER, USER, PASSWORD, PORT
@@ -18,7 +20,7 @@ wlan.connect(SSID, auth=(WLAN.WPA2, KEY), timeout=5000)
 while not wlan.isconnected(): machine.idle()
 print('Connected to wifi\n')
 
-def sub_lost_cup(topic, msg):
+def sub_cup(topic, msg):
     if (msg == b'lost'):
         start_flashing(100)
     elif (msg == b'found'):
@@ -27,11 +29,14 @@ def sub_lost_cup(topic, msg):
 client = MQTTClient(USER, BROKER, PORT, user=USER, password=PASSWORD)
 def settimeout(duration): pass
 client.settimeout = settimeout
-client.set_callback(sub_lost_cup)
+client.set_callback(sub_cup)
 client.connect()
-c.subscribe(b'cup')
+client.subscribe(b'/cup')
+
 
 accelerometer = LIS2HH12()
+py = Pytrack()
+gps = L76GNSS(py, timeout=30)
 
 def init_socket():
     sigfox = Sigfox(mode=Sigfox.SIGFOX, rcz=Sigfox.RCZ1)
@@ -48,9 +53,9 @@ def init_temp():
     pin = adc.channel(pin='G3')
     return pin
 
-#def create_thread_for_flash():
-#    thread = Thread(target=start_flashing, args=(10,))
-#    thread.start()
+def create_thread_for_flash():
+   thread = Thread(target=start_flashing, args=(10,))
+   thread.start()
 
 def start_flashing(iterations):
     for i in range(iterations):
@@ -123,5 +128,5 @@ while True:
     temp = read_temp()
     #socket.send(f"{temp} {sips}")
     print("Message sent: " + temp + " " + sips)
-    client.wait_msg()
+    client.check_msg()
     
