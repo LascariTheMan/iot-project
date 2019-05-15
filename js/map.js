@@ -22,10 +22,14 @@ map.addEventListener('mousemove', function(e) {
 let marker;
 
 
-function draw(coords) {
+function removeMarker() {
     if (marker) {
         map.removeLayer(marker);
     }
+}
+
+function draw(coords) {
+    removeMarker()
     marker = drawCircle(coords, 'red', 5, 5, 1);
     map.fitBounds(marker.getBounds());
 }

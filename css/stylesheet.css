@@ -21,25 +21,6 @@ body {
     bottom:5px;
     left:5px;
 }
-#checkBoxTextGt {
-    color: red;
-    user-select: none;
-}
-#checkBoxTextPhone {
-    color: blue;
-    user-select: none;
-}
-#checkBoxTextMean {
-    color: green;
-    user-select: none;
-}
-#checkBoxTextMedian {
-    color: yellowgreen;
-    user-select: none;
-}
-#inputSampleSize {
-    width: 30px;
-}
 .coordText {
     user-select:none;
 }
