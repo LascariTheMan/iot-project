@@ -21,7 +21,7 @@ var options = {
     userName: "mhyidsth",
     password: "sQBr9o6btgzV",
     onSuccess: onConnect,
-    onFailure: doFail
+    onFailure: onFailure
 };
 
 client.connect(options);
@@ -31,8 +31,8 @@ function onConnect() {
     console.log('Connected succesfully to cloudmqtt!');
 }
 
-function doFail(e) {
-    console.log(e);
+function onFailure(e) {
+    console.log("onFalure: " + e);
 }
 
 function onConnectionLost() {
@@ -62,8 +62,9 @@ function foundCup() {
 }
 
 function updateTemp() {
-    message = new Paho.MQTT.Message(lowerTemp + ";" + upperTemp);
+    message = new Paho.MQTT.Message(lowerTemp.value + ";" + upperTemp.value);
     message.destinationName = "/cup";
     client.send(message);
     console.log(message);
+    console.log("Updated temperature bounds to [" + lowerTemp.value + "; " + upperTemp.value + "]");
 }
