@@ -3,7 +3,7 @@ let findBtn = document.getElementById('findBtn');
 findBtn.onclick = plotCupOnMap;
 
 
-client = new Paho.MQTT.Client("m24.cloudmqtt.com", 14379, 'web_niels');
+client = new Paho.MQTT.Client("m24.cloudmqtt.com", 34379, "web_" + parseInt(Math.random() * 100, 10));
 
 client.onConnectionLost = onConnectionLost;
 
@@ -29,17 +29,18 @@ function doFail(e) {
 function onConnectionLost() {
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:"+responseObject.errorMessage);
-      }
-}
+      };
+};
 
 
 function plotCupOnMap() {
-    message = new Paho.MQTT.Message();
+    message = new Paho.MQTT.Message("helllo nieeeeels");
     message.destinationName = "/cup";
     client.send(message);
-    
+    console.log(message);
+
     //get cup coords from sigfox
     let coords = [55.3673, 10.4308];
     draw(coords);
-}
+};
 
