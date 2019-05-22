@@ -59,7 +59,7 @@ def create_thread_for_flash():
 
 def start_flashing(iterations):
     for i in range(iterations):
-        turn_on(()
+        turn_on()
         time.sleep(1)
         turn_off()
         time.sleep(1)
