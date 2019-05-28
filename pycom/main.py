@@ -20,11 +20,18 @@ wlan.connect(SSID, auth=(WLAN.WPA2, KEY), timeout=5000)
 while not wlan.isconnected(): machine.idle()
 print('Connected to wifi\n')
 
+temp_range = (-100, 100)
+
 def sub_cup(topic, msg):
     if (msg == b'lost'):
-        start_flashing(100)
+        create_thread_for_flash()
     elif (msg == b'found'):
         stop_flashing()
+    elif (msg.startswith(b'temp')):
+        string = msg.decode("utf-8")
+        temps = string[5:].split(';')
+        temp_range = (float(temps[0]), float(temps[1]))
+
 
 client = MQTTClient(USER, BROKER, PORT, user=USER, password=PASSWORD)
 def settimeout(duration): pass
@@ -52,6 +59,10 @@ def init_temp():
     adc = machine.ADC()
     pin = adc.channel(pin='G3')
     return pin
+
+def check_temp_range(temp):
+    if (temp < temp_range[0] or temp > temp_range[1]):
+        create_thread_for_flash()
 
 def create_thread_for_flash():
    thread = Thread(target=start_flashing, args=(10,))
@@ -122,6 +133,7 @@ init_pitch = get_pitch()
 while True:
     sips = watch_movements(duration=10, threshold=10)   # Duration: Seconds     Threshold: Degrees
     temp = read_temp()
+    check_temp_range(temp)
     #socket.send(f"{temp} {sips}")
     print("Message sent: " + temp + " " + sips)
     client.check_msg()

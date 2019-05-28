@@ -62,7 +62,7 @@ function foundCup() {
 }
 
 function updateTemp() {
-    message = new Paho.MQTT.Message(lowerTemp.value + ";" + upperTemp.value);
+    message = new Paho.MQTT.Message("temp " + lowerTemp.value + ";" + upperTemp.value);
     message.destinationName = "/cup";
     client.send(message);
     console.log(message);
